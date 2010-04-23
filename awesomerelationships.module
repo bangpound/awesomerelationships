@@ -10,13 +10,13 @@ function awesomerelationships_entity_info() {
       'label' => t('Relationship'),
       'base table' => 'relationship',
       'fieldable' => FALSE,
+      'controller class' => 'EntityRelationshipController',
       'entity keys' => array(
-        'relationship_id' => 'relationship_id',
-        'entity_type' => 'entity_type',
-        'entity_id' => 'entity_id',
+        'id' => 'relationship_id',
+        'bundle' => 'predicate',
       ),
       'bundle keys' => array(
-        'predicate' => 'predicate',
+        'bundle' => 'predicate',
       ),
       'bundles' => array(
         // describe Drupal's built in relationships
@@ -30,3 +30,26 @@ function awesomerelationships_entity_info() {
   return $return;
 }
 
+/**
+ * Controller class for entity relationships.
+ *
+ * This extends the DrupalDefaultEntityController class. The buildQuery method
+ * is overriden to add the self join and to exclude rows where the left and
+ * right entities are identical.
+ */
+class EntityRelationshipController extends DrupalDefaultEntityController {
+
+  protected function buildQuery($ids, $conditions = array(), $revision_id = FALSE) {
+    $query = parent::buildQuery($ids, $conditions, $revision_id);
+    // Add the machine name field from the {taxonomy_vocabulary} table.
+    $query->innerJoin('relationship_data', 'l', 'base.relationship_id = l.relationship_id');
+    $query->innerJoin('relationship_data', 'r', 'base.relationship_id = r.relationship_id AND NOT (l.entity_type = r.entity_type AND l.entity_id = r.entity_id)');
+    $query->addField('base', 'relationship_id');
+    $query->addField('base', 'predicate');
+    $query->addField('l', 'entity_type', 'left_entity_type');
+    $query->addField('l', 'entity_id', 'left_entity_id');
+    $query->addField('r', 'entity_type', 'right_entity_type');
+    $query->addField('r', 'entity_id', 'right_entity_id');
+    return $query;
+  }
+}
