@@ -36,5 +36,6 @@ Some related discussions/projects:
   • http://drupal.org/node/533222 (future of nodereference/userreference fields in D7)
   • http://drupal.org/project/entity (Entity API)
   • http://drupal.org/project/commentreference (CCK Comment Reference)
+  • http://drupal.pastebin.com/avnKvCD0 (notes from chx)
 
 
