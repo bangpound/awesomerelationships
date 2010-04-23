@@ -1,7 +1,7 @@
 <?php
 // $Id$
 
-/*
+/**
  * Implementation of hook_entity_info().
  */
 function awesomerelationships_entity_info() {
