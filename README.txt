@@ -38,4 +38,22 @@ Some related discussions/projects:
   • http://drupal.org/project/commentreference (CCK Comment Reference)
   • http://drupal.pastebin.com/avnKvCD0 (notes from chx)
 
+------------------------------------
+A little more thinking/rephrasing...
+
+Relationship data may not be stored by awesomerelationships itself; awesomerelationships will provide a way for entity or field providers to describe any relationships they may create. This way, we can query awesomerelationships' relationship API about any relationship on the site.
+
+The awesomerelationships module should be able to ask the relationship bundle provider things like:
+  • what is your subject type + predicate + object type?
+  • what relationships of your type exist, given a set of subject or object ids?
+    -> what relationships of your type exist for subject id *?
+    -> what relationships of your type exist for object id (123, 456, 78, 9) ?
+
+We will be able to ask awesomerelationships' relationship API about what relationships exist, like "given entity type X, find all relationship bundles where X is the subject (or object, or either)".
+
+The relationship API will find the shortest path between entities:
+  get_relationship('subject_type', 'object_type')
+  get_relationship(user, node)  ~~~> user --> node
+  get_relationship(user, term) ~~~> user --> node --> term
+  get_relationship(user, file, term) ~~~> user --> file --> node --> term
 
