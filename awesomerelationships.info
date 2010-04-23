@@ -1,0 +1,6 @@
+; $Id$
+name = Awesome Relationships
+description = Describes relationships between entities.
+core = 7.x
+files[] = awesomerelationships.module
+

@@ -1,0 +1,56 @@
+<?php $Id$
+
+/**
+ * Implementation of hook_schema().
+ */
+function awesomerelationships_schema() {
+  $schema['relationship'] = array(
+    'description' => 'Keeps track of relationship instances.', // check terminology
+    'fields' => array(
+      'relationship_id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'predicate' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+    ),
+    'primary key' => array('relationship_id'),
+    'indexes' => array(
+      'predicates' => array('predicate', 'relationship_id'),
+    ),
+  );
+  $schema['relationship_data'] = array(
+    'description' => 'Stores information about relationships between entities',
+    'fields' => array(
+      'relationship_id' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'entity_type' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'entity_id' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('relationship_id', 'entity_type', 'entity_id'),
+    'indexes' => array(
+      'relationship_id' => array('relationship_id'),
+      'entity' => array('entity_type', 'entity_id'),
+    ),
+  );
+  return $schema;
+}
