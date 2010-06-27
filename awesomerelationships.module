@@ -30,6 +30,30 @@ function awesomerelationships_entity_info() {
   return $return;
 }
 
+function awesomerelationships_entity_info_alter(&$entity_info) {
+  $entity_info['node']['relationships']['user'] = array(
+    // a handler -- this can be reusable or specific to the entity type
+    // it will do things like list 'user' entities related to one or more nodes
+    'handler' => 'AwesomerelationshipsEntityRelation',
+  );
+}
+
+function awesomerelationships_field_info_alter(&$field_info) {
+  $field_info['file']['relationships']['files'] = array(
+    'handler' => 'AwesomerelationshipsFieldRelation',
+  );
+}
+
+/*
+interface Awesomerelationship {
+  function init($left, $right) {} // sets types
+  function set_left(array()) {} // sets left objects
+  function set_right(array()) {} // sets right objects
+  function get_left() {} // returns left
+  function get_right() {} // returns right
+}
+*/
+
 /**
  * Controller class for entity relationships.
  *
