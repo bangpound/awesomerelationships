@@ -164,9 +164,6 @@ function awesomerelationships_field_delete($entity_type, $entity, $field, $insta
 }
 
 function awesomerelationships_field_load($entity_type, $entities, $field, $instances, $langcode, &$items, $age) {
-  $info = entity_get_info($entity_type);
-  $base_table = $info['base table'];
-  $id_key = $info['entity keys']['id'];
   foreach ($entities as $entity) {
     list($id, $vid, $bundle) = entity_extract_ids($entity_type, $entity);
     $entity_ids[] = $id;
@@ -175,7 +172,6 @@ function awesomerelationships_field_load($entity_type, $entities, $field, $insta
     ->condition('l.entity_type', $entity_type)
     ->condition('l.entity_id', $entity_ids);
   _awesomerationships_query_helper($query);
-  $query->join($base_table, NULL, "%alias.$id_key = l.entity_id");
   foreach ($query->execute() as $item) {
     $items[$item->left_entity_id][] = array(
       'relationship_id' => $item->relationship_id,
