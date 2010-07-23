@@ -132,13 +132,6 @@ function awesomerelationships_field_info() {
   );
 }
 
-function awesomerelationships_field_schema() {
-  return array(
-    'columns' => array(),
-    'indexes' => array(),
-  );
-}
-
 function awesomerelationships_field_is_empty() {
   return FALSE;
 }
@@ -148,7 +141,7 @@ function awesomerelationships_field_insert($entity_type, $entity, $field, $insta
   $insert1 = db_insert('relationship')->fields(array('predicate'));
   $insert2 = db_insert('relationship_data')->fields(array('relationship_id', 'entity_type', 'entity_id'));
   foreach ($items as $item) {
-    $relationship_id = $insert1->values(array($item['predicate']))->execute();
+    $relationship_id = $insert1->values(array($field['field_name']))->execute();
     $insert2->values(array($relationship_id, $item['entity_type'], $item['entity_id']));
     $insert2->values(array($relationship_id, $entity_type, $entity_id));
   }
@@ -210,19 +203,17 @@ function awesomerelationships_field_widget_info() {
  * Implements hook_field_widget_form().
  */
 function awesomerelationships_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
-  $element['predicate'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Predicate'),
-  );
+  $element['#type'] = 'fieldset';
   $element['entity_type'] = array(
     '#type' => 'select',
     '#title' => t('Entity type'),
     '#options' => drupal_map_assoc(array_keys(entity_get_info())),
-    '#default_value' => '',
+    '#default_value' => $items[$delta]['entity_type'],
   );
   $element['entity_id'] = array(
     '#title' => t('Entity ID'),
     '#type' => 'textfield',
+    '#default_value' => $items[$delta]['entity_id'],
   );
   return $element;
 }
