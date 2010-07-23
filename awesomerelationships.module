@@ -149,6 +149,20 @@ function awesomerelationships_field_insert($entity_type, $entity, $field, $insta
   $items = array();
 }
 
+function awesomerelationships_field_update($entity_type, $entity, $field, $instance, $langcode, &$items) {
+  awesomerelationships_field_delete($entity_type, $entity, $field, $instance, $langcode, $items);
+  awesomerelationships_field_insert($entity_type, $entity, $field, $instance, $langcode, $items);
+}
+
+function awesomerelationships_field_delete($entity_type, $entity, $field, $instance, $langcode, &$items) {
+  list($entity_id) = entity_extract_ids($entity_type, $entity);
+  $result = db_query('SELECT relationship_id FROM {relationship_data} WHERE entity_type = :entity_type AND entity_id = :entity_id', array(':entity_type' => $entity_type, ':entity_id' => $entity_id));
+  foreach ($result as $row) {
+    db_delete('relationship')->condition('relationship_id', $row->relationship_id)->execute();
+    db_delete('relationship_data')->condition('relationship_id', $row->relationship_id)->execute();
+  }
+}
+
 function awesomerelationships_field_load($entity_type, $entities, $field, $instances, $langcode, &$items, $age) {
   $info = entity_get_info($entity_type);
   $base_table = $info['base table'];
@@ -208,12 +222,12 @@ function awesomerelationships_field_widget_form(&$form, &$form_state, $field, $i
     '#type' => 'select',
     '#title' => t('Entity type'),
     '#options' => drupal_map_assoc(array_keys(entity_get_info())),
-    '#default_value' => $items[$delta]['entity_type'],
+    '#default_value' => isset($items[$delta]) ? $items[$delta]['entity_type'] : '',
   );
   $element['entity_id'] = array(
     '#title' => t('Entity ID'),
     '#type' => 'textfield',
-    '#default_value' => $items[$delta]['entity_id'],
+    '#default_value' => isset($items[$delta]) ? $items[$delta]['entity_id'] : '',
   );
   return $element;
 }
