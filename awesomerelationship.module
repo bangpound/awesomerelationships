@@ -4,7 +4,7 @@
 /**
  * Implementation of hook_entity_info().
  */
-function awesomerelationships_entity_info() {
+function awesomerelationship_entity_info() {
   $return = array(
     'relationship' => array(
       'label' => t('Relationship'),
@@ -30,17 +30,17 @@ function awesomerelationships_entity_info() {
   return $return;
 }
 
-function awesomerelationships_entity_info_alter(&$entity_info) {
+function awesomerelationship_entity_info_alter(&$entity_info) {
   $entity_info['node']['relationships']['user'] = array(
     // a handler -- this can be reusable or specific to the entity type
     // it will do things like list 'user' entities related to one or more nodes
-    'handler' => 'AwesomerelationshipsEntityRelation',
+    'handler' => 'AwesomerelationshipEntityRelation',
   );
 }
 
-function awesomerelationships_field_info_alter(&$field_info) {
+function awesomerelationship_field_info_alter(&$field_info) {
   $field_info['file']['relationships']['files'] = array(
-    'handler' => 'AwesomerelationshipsFieldRelation',
+    'handler' => 'AwesomerelationshipFieldRelation',
   );
 }
 
@@ -120,7 +120,7 @@ class AwesomeRelationshipHandler implements AwesomeRelationship {
 
 }
 
-function awesomerelationships_field_info() {
+function awesomerelationship_field_info() {
   return array(
     'awesomerelationship' => array(
       'label' => t('Awesome Relationship'),
@@ -132,11 +132,11 @@ function awesomerelationships_field_info() {
   );
 }
 
-function awesomerelationships_field_is_empty() {
+function awesomerelationship_field_is_empty() {
   return FALSE;
 }
 
-function awesomerelationships_field_insert($entity_type, $entity, $field, $instance, $langcode, &$items) {
+function awesomerelationship_field_insert($entity_type, $entity, $field, $instance, $langcode, &$items) {
   list($entity_id, $vid, $bundle) = entity_extract_ids($entity_type, $entity);
   $insert1 = db_insert('relationship')->fields(array('predicate'));
   $insert2 = db_insert('relationship_data')->fields(array('relationship_id', 'entity_type', 'entity_id'));
@@ -149,12 +149,12 @@ function awesomerelationships_field_insert($entity_type, $entity, $field, $insta
   $items = array();
 }
 
-function awesomerelationships_field_update($entity_type, $entity, $field, $instance, $langcode, &$items) {
-  awesomerelationships_field_delete($entity_type, $entity, $field, $instance, $langcode, $items);
-  awesomerelationships_field_insert($entity_type, $entity, $field, $instance, $langcode, $items);
+function awesomerelationship_field_update($entity_type, $entity, $field, $instance, $langcode, &$items) {
+  awesomerelationship_field_delete($entity_type, $entity, $field, $instance, $langcode, $items);
+  awesomerelationship_field_insert($entity_type, $entity, $field, $instance, $langcode, $items);
 }
 
-function awesomerelationships_field_delete($entity_type, $entity, $field, $instance, $langcode, &$items) {
+function awesomerelationship_field_delete($entity_type, $entity, $field, $instance, $langcode, &$items) {
   list($entity_id) = entity_extract_ids($entity_type, $entity);
   $result = db_query('SELECT relationship_id FROM {relationship_data} WHERE entity_type = :entity_type AND entity_id = :entity_id', array(':entity_type' => $entity_type, ':entity_id' => $entity_id));
   foreach ($result as $row) {
@@ -163,7 +163,7 @@ function awesomerelationships_field_delete($entity_type, $entity, $field, $insta
   }
 }
 
-function awesomerelationships_field_load($entity_type, $entities, $field, $instances, $langcode, &$items, $age) {
+function awesomerelationship_field_load($entity_type, $entities, $field, $instances, $langcode, &$items, $age) {
   foreach ($entities as $entity) {
     list($id, $vid, $bundle) = entity_extract_ids($entity_type, $entity);
     $entity_ids[] = $id;
@@ -182,7 +182,7 @@ function awesomerelationships_field_load($entity_type, $entities, $field, $insta
   }
 }
 
-function awesomerelationships_field_formatter_prepare_view($entity_type, $entities, $field, $instances, $langcode, &$items, $displays) {
+function awesomerelationship_field_formatter_prepare_view($entity_type, $entities, $field, $instances, $langcode, &$items, $displays) {
   $entities_to_load = array();
   foreach ($items as $key => $item) {
     foreach ($item as $delta => $value) {
@@ -200,7 +200,7 @@ function awesomerelationships_field_formatter_prepare_view($entity_type, $entiti
   }
 }
 
-function awesomerelationships_field_widget_info() {
+function awesomerelationship_field_widget_info() {
   return array(
     'awesomerelationship_default' => array(
       'label' => t('Awesomerelationship chooser'),
@@ -212,7 +212,7 @@ function awesomerelationships_field_widget_info() {
 /**
  * Implements hook_field_widget_form().
  */
-function awesomerelationships_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+function awesomerelationship_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
   $element['#type'] = 'fieldset';
   $element['entity_type'] = array(
     '#type' => 'select',
@@ -231,7 +231,7 @@ function awesomerelationships_field_widget_form(&$form, &$form_state, $field, $i
 /**
  * Implements hook_field_formatter_info().
  */
-function awesomerelationships_field_formatter_info() {
+function awesomerelationship_field_formatter_info() {
   return array(
     'awesomerelationship_default' => array(
       'label' => t('Default'),
@@ -243,7 +243,7 @@ function awesomerelationships_field_formatter_info() {
 /**
  * Implements hook_field_formatter_view().
  */
-function awesomerelationships_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+function awesomerelationship_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
   $list = array();
   foreach ($items as $item) {
     $uri = entity_uri($item['entity_type'], $item['entity']);

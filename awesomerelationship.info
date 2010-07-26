@@ -1,6 +1,6 @@
 ; $Id$
-name = Awesome Relationships
+name = Awesome Relationship
 description = Describes relationships between entities.
 core = 7.x
-files[] = awesomerelationships.module
+files[] = awesomerelationship.module
 

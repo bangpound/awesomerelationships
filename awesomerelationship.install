@@ -4,7 +4,7 @@
 /**
  * Implementation of hook_schema().
  */
-function awesomerelationships_schema() {
+function awesomerelationship_schema() {
   $schema['relationship'] = array(
     'description' => 'Keeps track of relationship instances.', // check terminology
     'fields' => array(
